@@ -1,0 +1,17 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if the user is the owner of the document
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Secure the user-specific data
+    match /users/{userId}/{collection}/{docId} {
+      allow read, write: if isOwner(userId);
+    }
+  }
+}
